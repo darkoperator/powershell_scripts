@@ -70,11 +70,11 @@ if ( (Get-PSSnapin -Name VMware.VimAutomation.Core -ErrorAction SilentlyContinue
 function find_vm {
 	param($vm_name)
 	$vm_info =@{}
-	$orig_vm = Get-VM | where {$_.name -match $vm_name} | select -First 1
+	$orig_vm = Get-VM | where {$_.name -match "$vm_name"} | select -First 1
 
 	if ($orig_vm -ne $null){
 		if ($orig_vm.PowerState -eq "PoweredOff"){
-			$vm_info_raw = $orig_vm.Extensiondata.Summary.Config.VmPathName.Split(" ")
+			$vm_info_raw = $orig_vm.Extensiondata.Summary.Config.VmPathName.Split(" ",2)
 			$vm_info['datastore'] = $vm_info_raw[0] -creplace "\[|\]", ""
 			$vm_info['folder'] = $vm_info_raw[1].split("/")[0]
 			$VM_info['vmhost'] = $orig_vm.VMHost
@@ -85,7 +85,7 @@ function find_vm {
 		}
 	}
 	else {
-		$Host.UI.WriteErrorLine(" [-] Could not find the VM specified")
+		$Host.UI.WriteErrorLine("[-] Could not find the VM specified")
 		exit
 	}
 	$vm_info
@@ -101,6 +101,7 @@ function clone {
 		$ds_path = New-PSDrive -Location $datastore -Name vmds -PSProvider VimDatastore -Root "\"
 	}
 	Write-Host "[*] Making copy of VM as $clone_name (Depending size, number of files and server load it may take a while)" -ForegroundColor Green
+	Write-Warning "This script creates a clone with disks in thick type."
 	Copy-DatastoreItem -Item "vmds:\$fs_folder\*" -Destination "vmds:\$clone_name\" -Force
 	Write-Host "[*] Registering $clone_name" -ForegroundColor Green
 	dir "vmds:\$clone_name\*.vmx" | %{New-VM -Name $clone_name -VMFilePath $_.DatastoreFullPath -VMHost $vmhost} | Out-Null
@@ -145,6 +146,7 @@ if ($connected) {
 	Write-Host "[*] Cloning $VM as $CloneName" -ForegroundColor Green
 	check_vm $CloneName
 	$vmhash = find_vm $VM
+	write $vmhash['folder']
 	clone $vmhash['datastore'] $vmhash['folder'] $CloneName $vmhash['vmhost']
-	change_uuid $CloneName
+	#change_uuid $CloneName
 }
