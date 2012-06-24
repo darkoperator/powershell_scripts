@@ -1,20 +1,15 @@
 ﻿# Define Script Parameters
 param 
 (
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$Server,
+	
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$MacAddress
 )
-# Check Paramters
-if ($Server -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a server to check against.")
-	exit
-}
-if ($MacAddress -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a Mac Address.")
-	exit
-}
+
 
 # Check if VMware Snappin is loaded for when ran outside of PowerCli
 if ( (Get-PSSnapin -Name VMware.VimAutomation.Core -ErrorAction SilentlyContinue) -eq $null )

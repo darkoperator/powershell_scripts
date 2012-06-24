@@ -9,30 +9,24 @@
 #                   3. Call script with options. .\clone_vm.ps1 -Server <ESX> -VM <VM to Clone> -CloneName            #
 #                      <Name to give to Clone VM> <Enter>                                                             #
 # License:			BSD 3 Clause License                                                                              #
-# Version:          0.2                                                                                               #
+# Version:          0.3                                                                                               #
 #######################################################################################################################
 # Define Script Parameters
 param 
 (
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$Server,
+	
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$VM,
+	
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$CloneName
 )
 
-# Check Paramters
-if ($Server -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a server wher the VM to clone is located.")
-	exit
-}
-if ($VM -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a Powered Off VM name to Clone.")
-}
-if ($CloneName -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a name for the clone.")
-}
 # Check if VMware Snappin is loaded for when ran outside of PowerCli
 if ( (Get-PSSnapin -Name VMware.VimAutomation.Core -ErrorAction SilentlyContinue) -eq $null )
 {

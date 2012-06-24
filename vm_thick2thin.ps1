@@ -2,24 +2,18 @@
 # Define Script Parameters
 param 
 (
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$vCenter,
+	
+	[Parameter(Mandatory=$true)]
+	[ValidateNotNullOrEmpty]
 	[string]$VM,
+	
 	[string]$ESXUser,
 	[string]$ESXPass,
 	[bool]$DeleteThick = $false
 )
-
-# Check Paramters
-if ($vCenter -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a server wher the VM to clone is located.")
-	exit
-}
-if ($VM -eq $null)
-{
-	$Host.UI.WriteErrorLine("[-] You must specify a Powered Off VM name to Clone.")
-	exit
-}
 
 # Check if VMware Snappin is loaded for when ran outside of PowerCli
 if ( (Get-PSSnapin -Name VMware.VimAutomation.Core -ErrorAction SilentlyContinue) -eq $null )
