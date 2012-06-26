@@ -413,5 +413,5 @@ function Confirm-IsAdmin {
 
 Export-ModuleMember -Function Import-DNSReconXML
 Export-ModuleMember -Function Import-NessusReport
-Export-ModuleMember -Function New-PingScan
+Export-ModuleMember -Function Invoke-PingScan
 Export-ModuleMember -Function Confirm-IsAdmin
