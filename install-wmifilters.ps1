@@ -4,7 +4,7 @@
 .DESCRIPTION
    The Script will create several WMI Filters for filtering based on:
    - Processor Architecture.
-   - If the Hosts is a Hyper-V Virtual Machine
+   - If the Hosts is a Virtual Machine
    - Operating System Version.
    - Type of Operating System.
    - If Java is installed
@@ -16,7 +16,7 @@
    .\install-wmifilters.ps1 -Verbose
 .NOTES
    Author: Carlos Perez carlos_perez[at]darkoperator.com
-   Date: 1/12/13
+   Date: 1/13/13
    Requirements: Execution policy should be RemoteSigned since script is not signed.
 #>
 
@@ -67,32 +67,92 @@ Function Create-WMIFilters
 	# Based on function from http://gallery.technet.microsoft.com/scriptcenter/f1491111-9f5d-4c83-b436-537eca9e8d94
     # Name,Query,Description
     $WMIFilters = @(
-					('Hyper-V Virtual Machines', 'SELECT * FROM Win32_ComputerSystem WHERE Model = "Virtual Machine"', 'Hyper-V'),
-                    ('VMware Virtual Machines', 'SELECT * FROM Win32_ComputerSystem WHERE Model LIKE "VMware%"', 'VMware'),
-                    ('Java is Installed', 'Select * From win32_Directory where (name="c:\\Program Files\\Java" or name="c:\\Program Files (x86)\\Java")', 'Oracle Java'),
-                    ('Java JRE 7 is Installed', 'Select * From win32_Directory where (name="c:\\Program Files\\Java\\jre7" or name="c:\\Program Files (x86)\\Java\\jre7")', 'Oracle Java JRE 7'),
-                    ('Java JRE 6 is Installed', 'Select * From win32_Directory where (name="c:\\Program Files\\Java\\jre6" or name="c:\\Program Files (x86)\\Java\\jre6")', 'Oracle Java JRE 6'),
-                    ('Workstation 32-bit', 'Select * from WIN32_OperatingSystem where ProductType=1 Select * from Win32_Processor where AddressWidth = "32"', ''),
-                    ('Workstation 64-bit', 'Select * from WIN32_OperatingSystem where ProductType=1 Select * from Win32_Processor where AddressWidth = "64"', ''),
-                    ('Workstations', 'SELECT * FROM Win32_OperatingSystem WHERE ProductType = "1"', ''),
-                    ('Domain Controllers', 'SELECT * FROM Win32_OperatingSystem WHERE ProductType = "2"', ''),
-                    ('Servers', 'SELECT * FROM Win32_OperatingSystem WHERE ProductType = "3"', ''),
-                    ('Windows XP', 'select * from Win32_OperatingSystem where (Version like "5.1%" or Version like "5.2%") and ProductType = "1"', ''),
-                    ('Windows Vista', 'select * from Win32_OperatingSystem where Version like "6.0%" and ProductType = "1"', ''),
-                    ('Windows 7', 'select * from Win32_OperatingSystem where Version like "6.1%" and ProductType = "1"', ''),
-                    ('Windows 8', 'select * from Win32_OperatingSystem where Version like "6.2%" and ProductType = "1"', ''),
-                    ('Windows Server 2003', 'select * from Win32_OperatingSystem where Version like "5.2%" and ProductType = "3"', ''),
-                    ('Windows Server 2008', 'select * from Win32_OperatingSystem where Version like "6.0%" and ProductType = "3"', ''),
-                    ('Windows Server 2008 R2', 'select * from Win32_OperatingSystem where Version like "6.1%" and ProductType = "3"', ''),
-                    ('Windows Server 2012', 'select * from Win32_OperatingSystem where Version like "6.2%" and ProductType = "3"', ''),
-                    ('Windows Vista and Windows Server 2008', 'select * from Win32_OperatingSystem where Version like "6.0%" and ProductType<>"2"', ''),
-                    ('Windows Server 2003 and Windows Server 2008', 'select * from Win32_OperatingSystem where (Version like "5.2%" or Version like "6.0%") and ProductType="3"', ''),
-                    ('Windows XP and 2003', 'select * from Win32_OperatingSystem where Version like "5.%" and ProductType<>"2"', ''),
-                    ('Windows 8 and 2012', 'select * from Win32_OperatingSystem where Version like "6.2%" and ProductType<>"2"', ''),
-                    ('Internet Explorer 10', '"Select * From CIM_Datafile Where (Name="c:\\Program Files (x86)\\Internet Explorer\\iexplore.exe" or Name="c:\\Program Files\\Internet Explorer\\iexplore.exe") and version like "10.%"'),
-                    ('Internet Explorer 9', '"Select * From CIM_Datafile Where (Name="c:\\Program Files (x86)\\Internet Explorer\\iexplore.exe" or Name="c:\\Program Files\\Internet Explorer\\iexplore.exe") and version like "9.%"'),
-                    ('Internet Explorer 8', '"Select * From CIM_Datafile Where (Name="c:\\Program Files (x86)\\Internet Explorer\\iexplore.exe" or Name="c:\\Program Files\\Internet Explorer\\iexplore.exe") and version like "8.%"'),
-                    ('Internet Explorer 7', '"Select * From CIM_Datafile Where (Name="c:\\Program Files (x86)\\Internet Explorer\\iexplore.exe" or Name="c:\\Program Files\\Internet Explorer\\iexplore.exe") and version like "7.%"')
+                    ('Hyper-V Virtual Machines', 
+                        'SELECT * FROM Win32_ComputerSystem WHERE Model = "Virtual Machine"', 
+                        'Microsoft Hyper-V 2.0 AND 3.0'),
+                    ('VMware Virtual Machines', 
+                        'SELECT * FROM Win32_ComputerSystem WHERE Model LIKE "VMware%"', 
+                        'VMware Fusion, WORkstation AND ESXi'),
+                    ('Parallels Virtual Machines', 
+                        'SELECT * FROM Win32_ComputerSystem WHERE Model LIKE "Parallels%"', 
+                        'OSX Parallels Virtual Machine'),
+                    ('VirtualBox Virtual Machines', 
+                        'SELECT * FROM Win32_ComputerSystem WHERE Model LIKE "VirtualBox%"', 
+                        'Oracle VirtualBox Virtual Machine'),
+                    ('Xen Virtual Machines', 
+                        'SELECT * FROM Win32_ComputerSystem WHERE Model LIKE "HVM dom%"', 
+                        'Citrix Xen Server Virtual Machine'),
+                    ('Virtual Machines',
+                        'SELECT * FROM Win32_ComputerSystem WHERE (Model LIKE "Parallels%" OR Model LIKE "HVM dom% OR Model LIKE "VirtualBox%" OR Model LIKE "Parallels%" OR Model LIKE "VMware%" OR Model = "Virtual Machine")',
+                        'Virtual Machine from Hyper-V, VMware, Xen, Parallels OR VirtualBox'),
+                    ('Java is Installed', 
+                        'SELECT * FROM win32_DirectORy WHERE (name="c:\\Program Files\\Java" OR name="c:\\Program Files (x86)\\Java")', 
+                        'Oracle Java'),
+                    ('Java JRE 7 is Installed', 
+                        'SELECT * FROM win32_DirectORy WHERE (name="c:\\Program Files\\Java\\jre7" OR name="c:\\Program Files (x86)\\Java\\jre7")', 
+                        'Oracle Java JRE 7'),
+                    ('Java JRE 6 is Installed', 
+                        'SELECT * FROM win32_DirectORy WHERE (name="c:\\Program Files\\Java\\jre6" OR name="c:\\Program Files (x86)\\Java\\jre6")', 
+                        'Oracle Java JRE 6'),
+                    ('Workstation 32-bit', 
+                        'Select * from WIN32_OperatingSystem WHERE ProductType=1 Select * from Win32_Processor WHERE AddressWidth = "32"', 
+                        ''),
+                    ('Workstation 64-bit', 
+                        'Select * from WIN32_OperatingSystem WHERE ProductType=1 Select * from Win32_Processor WHERE AddressWidth = "64"', 
+                        ''),
+                    ('Workstations', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE ProductType = "1"', 
+                        ''),
+                    ('Domain Controllers', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE ProductType = "2"', 
+                        ''),
+                    ('Servers', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE ProductType = "3"', 
+                        ''),
+                    ('Windows XP', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE (Version LIKE "5.1%" OR Version LIKE "5.2%") AND ProductType = "1"', 
+                        ''),
+                    ('Windows Vista', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.0%" AND ProductType = "1"', 
+                        ''),
+                    ('Windows 7', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.1%" AND ProductType = "1"', 
+                        ''),
+                    ('Windows 8', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.2%" AND ProductType = "1"', 
+                        ''),
+                    ('Windows Server 2003', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "5.2%" AND ProductType = "3"', 
+                        ''),
+                    ('Windows Server 2008', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.0%" AND ProductType = "3"', 
+                        ''),
+                    ('Windows Server 2008 R2', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.1%" AND ProductType = "3"', 
+                        ''),
+                    ('Windows Server 2012', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.2%" AND ProductType = "3"', 
+                        ''),
+                    ('Windows Vista AND Windows Server 2008', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.0%" AND ProductType<>"2"', 
+                        ''),
+                    ('Windows Server 2003 AND Windows Server 2008', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE (Version LIKE "5.2%" OR Version LIKE "6.0%") AND ProductType="3"', 
+                        ''),
+                    ('Windows XP AND 2003', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "5.%" AND ProductType<>"2"', 
+                        ''),
+                    ('Windows 8 AND 2012', 
+                        'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.2%" AND ProductType<>"2"', 
+                        ''),
+                    ('Internet ExplORer 10', 
+                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "10.%"'),
+                    ('Internet ExplORer 9', 
+                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "9.%"'),
+                    ('Internet ExplORer 8', 
+                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "8.%"'),
+                    ('Internet ExplORer 7', 
+                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "7.%"')
                 )
 
     $defaultNamingContext = (get-adrootdse).defaultnamingcontext 
