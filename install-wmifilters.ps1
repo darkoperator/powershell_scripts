@@ -146,13 +146,13 @@ Function Create-WMIFilters
                         'SELECT * FROM Win32_OperatingSystem WHERE Version LIKE "6.2%" AND ProductType<>"2"', 
                         ''),
                     ('Internet ExplORer 10', 
-                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "10.%"'),
+                        'SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "10.%"'),
                     ('Internet ExplORer 9', 
-                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "9.%"'),
+                        'SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "9.%"'),
                     ('Internet ExplORer 8', 
-                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "8.%"'),
+                        'SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "8.%"'),
                     ('Internet ExplORer 7', 
-                        '"SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "7.%"')
+                        'SELECT * FROM CIM_Datafile WHERE (Name="c:\\Program Files (x86)\\Internet ExplORer\\iexplORe.exe" OR Name="c:\\Program Files\\Internet ExplORer\\iexplORe.exe") AND version LIKE "7.%"')
                 )
 
     $defaultNamingContext = (get-adrootdse).defaultnamingcontext 
