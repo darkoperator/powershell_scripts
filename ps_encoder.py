@@ -65,7 +65,7 @@ def usage():
 
 def main():
     try:
-        options, args = getopt.getopt(sys.argv[1:], 'hs:', ['help', 'script'])
+        options, args = getopt.getopt(sys.argv[1:], 'hs:', ['help', 'script='])
     except getopt.GetoptError:
         print "Wrong Option Provided!"
         usage()
