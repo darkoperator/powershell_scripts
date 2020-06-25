@@ -50,8 +50,8 @@ def powershell_encode(data):
     # assign powershell command as the new one
     powershell_command = blank_command
     # base64 encode the powershell command
-    powershell_command = base64.b64encode(powershell_command)
-    return powershell_command
+    powershell_command = base64.b64encode(powershell_command.encode())
+    return powershell_command.decode("utf-8")
 
 
 def usage():
@@ -67,7 +67,7 @@ def main():
     try:
         options, args = getopt.getopt(sys.argv[1:], 'hs:', ['help', 'script='])
     except getopt.GetoptError:
-        print "Wrong Option Provided!"
+        print("Wrong Option Provided!")
         usage()
     if len(sys.argv) == 1:
         usage()
@@ -78,11 +78,11 @@ def main():
         elif opt in ('-s', '--script'):
             script_file = arg
             if not os.path.isfile(script_file):
-                print "The specified powershell script does not exists"
+                print("The specified powershell script does not exists")
                 sys.exit(1)
             else:
                 ps_script = open(script_file, 'r').read()
-                print powershell_encode(ps_script)
+                print(powershell_encode(ps_script))
 
 
 if __name__ == "__main__":
